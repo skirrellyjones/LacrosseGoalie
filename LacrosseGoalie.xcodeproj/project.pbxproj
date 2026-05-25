@@ -6,30 +6,8 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		88A885FB2FC4767B0056DE56 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A885F62FC4767B0056DE56 /* HomeView.swift */; };
-		88A885FC2FC4767B0056DE56 /* GameSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A885F32FC4767B0056DE56 /* GameSetupView.swift */; };
-		88A885FE2FC4767B0056DE56 /* GameSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A885F42FC4767B0056DE56 /* GameSummaryView.swift */; };
-		88A885FF2FC4767B0056DE56 /* CageGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A885F22FC4767B0056DE56 /* CageGridView.swift */; };
-		88A886002FC4767B0056DE56 /* LiveGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A885F72FC4767B0056DE56 /* LiveGameView.swift */; };
-		88A886012FC4767B0056DE56 /* SeasonStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A885F82FC4767B0056DE56 /* SeasonStatsView.swift */; };
-		88A886022FC4767B0056DE56 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A885F92FC4767B0056DE56 /* SettingsView.swift */; };
-		88A886032FC4767B0056DE56 /* ShotLogSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A885FA2FC4767B0056DE56 /* ShotLogSheet.swift */; };
-		88A8860B2FC47AD40056DE56 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A8860A2FC47AD40056DE56 /* HistoryView.swift */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		88A885DA2FC475CE0056DE56 /* LacrosseGoalie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LacrosseGoalie.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		88A885F22FC4767B0056DE56 /* CageGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CageGridView.swift; sourceTree = "<group>"; };
-		88A885F32FC4767B0056DE56 /* GameSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSetupView.swift; sourceTree = "<group>"; };
-		88A885F42FC4767B0056DE56 /* GameSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSummaryView.swift; sourceTree = "<group>"; };
-		88A885F62FC4767B0056DE56 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		88A885F72FC4767B0056DE56 /* LiveGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveGameView.swift; sourceTree = "<group>"; };
-		88A885F82FC4767B0056DE56 /* SeasonStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeasonStatsView.swift; sourceTree = "<group>"; };
-		88A885F92FC4767B0056DE56 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		88A885FA2FC4767B0056DE56 /* ShotLogSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotLogSheet.swift; sourceTree = "<group>"; };
-		88A886052FC479D30056DE56 /* LacrosseGoalie-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LacrosseGoalie-Bridging-Header.h"; sourceTree = "<group>"; };
-		88A8860A2FC47AD40056DE56 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -54,9 +32,7 @@
 		88A885D12FC475CE0056DE56 = {
 			isa = PBXGroup;
 			children = (
-				88A886052FC479D30056DE56 /* LacrosseGoalie-Bridging-Header.h */,
 				88A885DC2FC475CE0056DE56 /* LacrosseGoalie */,
-				88A885F12FC4766E0056DE56 /* Views */,
 				88A885DB2FC475CE0056DE56 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -67,22 +43,6 @@
 				88A885DA2FC475CE0056DE56 /* LacrosseGoalie.app */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		88A885F12FC4766E0056DE56 /* Views */ = {
-			isa = PBXGroup;
-			children = (
-				88A885F22FC4767B0056DE56 /* CageGridView.swift */,
-				88A885F32FC4767B0056DE56 /* GameSetupView.swift */,
-				88A885F42FC4767B0056DE56 /* GameSummaryView.swift */,
-				88A885F62FC4767B0056DE56 /* HomeView.swift */,
-				88A885F72FC4767B0056DE56 /* LiveGameView.swift */,
-				88A885F82FC4767B0056DE56 /* SeasonStatsView.swift */,
-				88A885F92FC4767B0056DE56 /* SettingsView.swift */,
-				88A885FA2FC4767B0056DE56 /* ShotLogSheet.swift */,
-				88A8860A2FC47AD40056DE56 /* HistoryView.swift */,
-			);
-			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,15 +120,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				88A885FB2FC4767B0056DE56 /* HomeView.swift in Sources */,
-				88A885FC2FC4767B0056DE56 /* GameSetupView.swift in Sources */,
-				88A885FE2FC4767B0056DE56 /* GameSummaryView.swift in Sources */,
-				88A8860B2FC47AD40056DE56 /* HistoryView.swift in Sources */,
-				88A885FF2FC4767B0056DE56 /* CageGridView.swift in Sources */,
-				88A886002FC4767B0056DE56 /* LiveGameView.swift in Sources */,
-				88A886012FC4767B0056DE56 /* SeasonStatsView.swift in Sources */,
-				88A886022FC4767B0056DE56 /* SettingsView.swift in Sources */,
-				88A886032FC4767B0056DE56 /* ShotLogSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +272,6 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "LacrosseGoalie/LacrosseGoalie-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
@@ -356,7 +306,6 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "LacrosseGoalie/LacrosseGoalie-Bridging-Header.h";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
