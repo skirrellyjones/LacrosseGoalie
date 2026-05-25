@@ -12,6 +12,14 @@ struct SettingsView: View {
 
                 // History toggle
                 Section {
+                    Toggle("Dark Mode", isOn: $store.darkModeEnabled)
+                } header: {
+                    Text("Appearance")
+                } footer: {
+                    Text("Override your system theme and force dark mode across the app.")
+                }
+
+                Section {
                     Toggle("Track Shot Location", isOn: $store.shotLocationEnabled)
                 } header: {
                     Text("Shot Tracking")

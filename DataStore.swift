@@ -17,12 +17,18 @@ class DataStore: ObservableObject {
         didSet { UserDefaults.standard.set(shotLocationEnabled, forKey: "shotLocationEnabled") }
     }
 
+    /// Whether to force dark mode regardless of system setting. Persisted via UserDefaults.
+    @Published var darkModeEnabled: Bool {
+        didSet { UserDefaults.standard.set(darkModeEnabled, forKey: "darkModeEnabled") }
+    }
+
     private let saveURL: URL
 
     init() {
         historyEnabled = UserDefaults.standard.bool(forKey: "historyEnabled")
         // Shot location defaults to ON
         shotLocationEnabled = UserDefaults.standard.object(forKey: "shotLocationEnabled") as? Bool ?? true
+        darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
 
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         saveURL = docs.appendingPathComponent("games.json")

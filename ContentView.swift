@@ -16,5 +16,7 @@ struct ContentView: View {
                 activeGame = nil
             }
         }
+        // Apply color scheme across the whole app
+        .preferredColorScheme(store.darkModeEnabled ? .dark : nil)
     }
 }
