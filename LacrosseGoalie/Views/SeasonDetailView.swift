@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SeasonDetailView: View {
     @EnvironmentObject var store: DataStore
@@ -8,9 +9,6 @@ struct SeasonDetailView: View {
     var liveSeason: Season {
         store.seasons.first { $0.id == season.id } ?? season
     }
-
-    @State private var showingExporter = false
-    @State private var csvURL: URL? = nil
 
     var sortedGames: [Game] {
         liveSeason.games.sorted { $0.date > $1.date }
@@ -79,11 +77,6 @@ struct SeasonDetailView: View {
                 .disabled(liveSeason.games.isEmpty)
             }
         }
-        .sheet(isPresented: $showingExporter) {
-            if let url = csvURL {
-                ShareSheet(url: url)
-            }
-        }
     }
 
     private func exportCSV() {
@@ -91,21 +84,17 @@ struct SeasonDetailView: View {
         let fileName = "\(liveSeason.name.replacingOccurrences(of: " ", with: "_")).csv"
         let tmp = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         try? csv.write(to: tmp, atomically: true, encoding: .utf8)
-        csvURL = tmp
-        showingExporter = true
+
+        let av = UIActivityViewController(activityItems: [tmp], applicationActivities: nil)
+
+        // Walk up to the topmost presented view controller so the share sheet
+        // is presented correctly even when inside a NavigationStack.
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let root = windowScene.windows.first?.rootViewController else { return }
+        var top = root
+        while let next = top.presentedViewController { top = next }
+        top.present(av, animated: true)
     }
-}
-
-// MARK: - Share Sheet (UIKit wrapper)
-
-struct ShareSheet: UIViewControllerRepresentable {
-    let url: URL
-
-    func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: [url], applicationActivities: nil)
-    }
-
-    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
 // MARK: - Save % Bar Chart (moved from SeasonStatsView)
