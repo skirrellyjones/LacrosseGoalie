@@ -256,7 +256,7 @@ struct InterceptionView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("Interceptions")
                     .font(.headline)
-                Text("Passes or shots cut off")
+                Text("Passes cut off")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
