@@ -4,6 +4,7 @@ import SwiftUI
 /// - When shot location is ON:  `zone` is set, outcome defaults to .save
 /// - When shot location is OFF: `zone` is nil, outcome is pre-selected by whichever button was tapped
 struct ShotLogSheet: View {
+    @EnvironmentObject var store: DataStore
     @Environment(\.dismiss) var dismiss
 
     let zone: CageZone?      // nil when shot-location tracking is off
@@ -128,6 +129,7 @@ struct ShotLogSheet: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        .preferredColorScheme(store.darkModeEnabled ? .dark : nil)
     }
 }
 

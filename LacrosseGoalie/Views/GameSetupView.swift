@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct GameSetupView: View {
+    @EnvironmentObject var store: DataStore
     @Environment(\.dismiss) var dismiss
     @State private var opponent = ""
 
@@ -43,5 +44,6 @@ struct GameSetupView: View {
                 }
             }
         }
+        .preferredColorScheme(store.darkModeEnabled ? .dark : nil)
     }
 }
