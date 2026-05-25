@@ -14,6 +14,7 @@ struct SeasonStatsView: View {
                     StatRow("Goals Against", "\(store.seasonGoalsAgainst)")
                     StatRow("Save %",        String(format: "%.1f%%", store.seasonSavePct))
                     StatRow("Ground Balls",  "\(store.seasonGroundBalls)")
+                    StatRow("Interceptions", "\(store.seasonInterceptions)")
                     StatRow("Clear %",       String(format: "%.1f%%", store.seasonClearPct))
                 } label: {
                     Text("Season Totals").font(.headline)

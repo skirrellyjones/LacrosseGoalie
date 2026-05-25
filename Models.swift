@@ -62,6 +62,7 @@ struct Game: Identifiable, Codable {
     var shots: [Shot] = []
     var clears: [Clear] = []
     var groundBalls: Int = 0
+    var interceptions: Int = 0
     var isCompleted: Bool = false
 
     // MARK: - Overall Stats

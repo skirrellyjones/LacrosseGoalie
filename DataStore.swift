@@ -71,6 +71,7 @@ class DataStore: ObservableObject {
     var seasonGoalsAgainst: Int    { games.reduce(0) { $0 + $1.totalGoalsAgainst } }
     var seasonShots: Int           { games.reduce(0) { $0 + $1.totalShots } }
     var seasonGroundBalls: Int     { games.reduce(0) { $0 + $1.groundBalls } }
+    var seasonInterceptions: Int   { games.reduce(0) { $0 + $1.interceptions } }
     var seasonClearAttempts: Int   { games.reduce(0) { $0 + $1.clearAttempts } }
     var seasonSuccessfulClears: Int { games.reduce(0) { $0 + $1.successfulClears } }
 

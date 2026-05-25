@@ -25,6 +25,7 @@ struct GameSummaryView: View {
                     StatRow("Goals Against",  "\(game.totalGoalsAgainst)")
                     StatRow("Save %",         String(format: "%.1f%%", game.savePercentage))
                     StatRow("Ground Balls",   "\(game.groundBalls)")
+                    StatRow("Interceptions",  "\(game.interceptions)")
                     StatRow("Clear %",        String(format: "%.1f%%  (\(game.successfulClears)/\(game.clearAttempts))", game.clearPercentage))
                 }
 

@@ -71,6 +71,7 @@ struct LiveGameView: View {
                     VStack(spacing: 14) {
                         ClearTrackingView(game: $game)
                         GroundBallView(game: $game)
+                        InterceptionView(game: $game)
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 24)
@@ -214,6 +215,52 @@ struct ClearTrackingView: View {
                         .background(Color.red.opacity(0.15))
                         .foregroundColor(.red)
                         .cornerRadius(12)
+                }
+            }
+        }
+        .padding()
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(14)
+    }
+}
+
+// MARK: - Interceptions
+
+struct InterceptionView: View {
+    @Binding var game: Game
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Interceptions")
+                    .font(.headline)
+                Text("Passes or shots cut off")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            HStack(spacing: 20) {
+                Button {
+                    if game.interceptions > 0 { game.interceptions -= 1 }
+                } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.title)
+                        .foregroundColor(game.interceptions > 0 ? .secondary : .secondary.opacity(0.3))
+                }
+                .disabled(game.interceptions == 0)
+
+                Text("\(game.interceptions)")
+                    .font(.title.bold())
+                    .frame(minWidth: 36)
+
+                Button {
+                    game.interceptions += 1
+                } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .font(.title)
+                        .foregroundColor(.purple)
                 }
             }
         }
