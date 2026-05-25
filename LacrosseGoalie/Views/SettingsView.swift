@@ -40,15 +40,16 @@ struct SettingsView: View {
                 }
 
                 // Danger zone — only visible when history is on and there's data
-                if store.historyEnabled && !store.games.isEmpty {
+                if store.historyEnabled && !store.seasons.isEmpty {
                     Section {
-                        Button("Clear All Game History", role: .destructive) {
+                        Button("Clear All Season History", role: .destructive) {
                             showingClearConfirm = true
                         }
                     } header: {
                         Text("Danger Zone")
                     } footer: {
-                        Text("This permanently deletes all \(store.games.count) saved game(s). Cannot be undone.")
+                        let gameCount = store.seasons.reduce(0) { $0 + $1.games.count }
+                        Text("This permanently deletes all \(store.seasons.count) season(s) and \(gameCount) game(s). Cannot be undone.")
                     }
                 }
 
@@ -73,7 +74,7 @@ struct SettingsView: View {
                 }
             }
             .confirmationDialog(
-                "Clear all \(store.games.count) game(s)?",
+                "Clear all \(store.seasons.count) season(s)?",
                 isPresented: $showingClearConfirm,
                 titleVisibility: .visible
             ) {

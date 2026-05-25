@@ -41,29 +41,17 @@ struct HomeView: View {
                         .cornerRadius(16)
                 }
 
-                // Only shown when history is enabled and there are saved games
-                if store.historyEnabled && !store.games.isEmpty {
+                // Only shown when history is enabled
+                if store.historyEnabled {
                     NavigationLink {
-                        HistoryView()
+                        SeasonListView()
                     } label: {
-                        Label("Game History", systemImage: "list.bullet.rectangle.portrait.fill")
+                        Label("My Seasons", systemImage: "calendar.badge.clock")
                             .font(.title2)
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue.opacity(0.1))
                             .foregroundColor(.blue)
-                            .cornerRadius(16)
-                    }
-
-                    NavigationLink {
-                        SeasonStatsView()
-                    } label: {
-                        Label("Season Stats", systemImage: "chart.bar.fill")
-                            .font(.title2)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.purple.opacity(0.1))
-                            .foregroundColor(.purple)
                             .cornerRadius(16)
                     }
                 }

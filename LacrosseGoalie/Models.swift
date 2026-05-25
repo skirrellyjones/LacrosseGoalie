@@ -39,6 +39,31 @@ enum ShotType: String, CaseIterable, Codable {
 
 // MARK: - Models
 
+struct Season: Identifiable, Codable {
+    var id = UUID()
+    var name: String
+    var createdDate = Date()
+    var games: [Game] = []
+
+    // MARK: - Aggregates
+    var totalSaves: Int           { games.reduce(0) { $0 + $1.totalSaves } }
+    var totalGoalsAgainst: Int    { games.reduce(0) { $0 + $1.totalGoalsAgainst } }
+    var totalShots: Int           { games.reduce(0) { $0 + $1.totalShots } }
+    var totalGroundBalls: Int     { games.reduce(0) { $0 + $1.groundBalls } }
+    var totalInterceptions: Int   { games.reduce(0) { $0 + $1.interceptions } }
+    var totalClearAttempts: Int   { games.reduce(0) { $0 + $1.clearAttempts } }
+    var totalSuccessfulClears: Int { games.reduce(0) { $0 + $1.successfulClears } }
+
+    var savePercentage: Double {
+        guard totalShots > 0 else { return 0 }
+        return Double(totalSaves) / Double(totalShots) * 100
+    }
+    var clearPercentage: Double {
+        guard totalClearAttempts > 0 else { return 0 }
+        return Double(totalSuccessfulClears) / Double(totalClearAttempts) * 100
+    }
+}
+
 struct Shot: Identifiable, Codable {
     var id = UUID()
     var timestamp = Date()

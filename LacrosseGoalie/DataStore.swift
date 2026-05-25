@@ -6,7 +6,7 @@ import Combine
 /// Manages all game data and persists it to a JSON file in the app's Documents folder.
 class DataStore: ObservableObject {
 
-    @Published var games: [Game] = []
+    @Published var seasons: [Season] = []
 
     /// Whether to save and show game history. Persisted via UserDefaults.
     @Published var historyEnabled: Bool {
@@ -30,12 +30,11 @@ class DataStore: ObservableObject {
 
     init() {
         historyEnabled = UserDefaults.standard.bool(forKey: "historyEnabled")
-        // Shot location defaults to ON
         shotLocationEnabled = UserDefaults.standard.object(forKey: "shotLocationEnabled") as? Bool ?? true
         darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
 
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        saveURL = docs.appendingPathComponent("games.json")
+        saveURL = docs.appendingPathComponent("seasons.json")
 
         load()
         applyColorScheme()
@@ -55,54 +54,104 @@ class DataStore: ObservableObject {
 
     func save() {
         do {
-            let data = try JSONEncoder().encode(games)
+            let data = try JSONEncoder().encode(seasons)
             try data.write(to: saveURL, options: .atomic)
         } catch {
-            print("Failed to save games: \(error)")
+            print("Failed to save seasons: \(error)")
         }
     }
 
     private func load() {
         guard let data = try? Data(contentsOf: saveURL),
-              let loaded = try? JSONDecoder().decode([Game].self, from: data)
+              let loaded = try? JSONDecoder().decode([Season].self, from: data)
         else { return }
-        games = loaded
+        seasons = loaded
     }
 
-    // MARK: - CRUD
+    // MARK: - Season CRUD
 
-    func addGame(_ game: Game) {
-        games.append(game)
+    func addSeason(_ season: Season) {
+        seasons.append(season)
         if historyEnabled { save() }
     }
 
-    func deleteGame(at offsets: IndexSet) {
-        games.remove(atOffsets: offsets)
+    func deleteSeason(at offsets: IndexSet) {
+        seasons.remove(atOffsets: offsets)
         save()
     }
 
     func clearAllHistory() {
-        games = []
+        seasons = []
         save()
     }
 
-    // MARK: - Season Aggregates
+    // MARK: - Game CRUD
 
-    var seasonSaves: Int           { games.reduce(0) { $0 + $1.totalSaves } }
-    var seasonGoalsAgainst: Int    { games.reduce(0) { $0 + $1.totalGoalsAgainst } }
-    var seasonShots: Int           { games.reduce(0) { $0 + $1.totalShots } }
-    var seasonGroundBalls: Int     { games.reduce(0) { $0 + $1.groundBalls } }
-    var seasonInterceptions: Int   { games.reduce(0) { $0 + $1.interceptions } }
-    var seasonClearAttempts: Int   { games.reduce(0) { $0 + $1.clearAttempts } }
-    var seasonSuccessfulClears: Int { games.reduce(0) { $0 + $1.successfulClears } }
-
-    var seasonSavePct: Double {
-        guard seasonShots > 0 else { return 0 }
-        return Double(seasonSaves) / Double(seasonShots) * 100
+    func addGame(_ game: Game, toSeasonId id: UUID) {
+        guard let idx = seasons.firstIndex(where: { $0.id == id }) else { return }
+        seasons[idx].games.append(game)
+        if historyEnabled { save() }
     }
 
-    var seasonClearPct: Double {
-        guard seasonClearAttempts > 0 else { return 0 }
-        return Double(seasonSuccessfulClears) / Double(seasonClearAttempts) * 100
+    func deleteGame(id gameId: UUID, fromSeasonId seasonId: UUID) {
+        guard let sIdx = seasons.firstIndex(where: { $0.id == seasonId }) else { return }
+        seasons[sIdx].games.removeAll { $0.id == gameId }
+        save()
+    }
+
+    // MARK: - CSV Export
+
+    func exportCSV(for season: Season) -> String {
+        let zones = CageZone.allCases
+        let zoneHeaders = zones.flatMap { ["\($0.label)-Saves", "\($0.label)-Goals"] }
+
+        let header = (["Date", "Opponent", "Saves", "Goals Against", "Save%",
+                        "Ground Balls", "Interceptions",
+                        "Clear Attempts", "Successful Clears", "Clear%"] + zoneHeaders)
+            .joined(separator: ",")
+
+        var rows: [String] = [header]
+
+        for game in season.games.sorted(by: { $0.date < $1.date }) {
+            let zoneCols = zones.flatMap { zone in
+                ["\(game.shotCount(zone: zone, outcome: .save))",
+                 "\(game.shotCount(zone: zone, outcome: .goal))"]
+            }
+            let row = ([
+                "\"\(game.formattedDate)\"",
+                "\"\(game.opponent)\"",
+                "\(game.totalSaves)",
+                "\(game.totalGoalsAgainst)",
+                String(format: "%.1f", game.savePercentage),
+                "\(game.groundBalls)",
+                "\(game.interceptions)",
+                "\(game.clearAttempts)",
+                "\(game.successfulClears)",
+                String(format: "%.1f", game.clearPercentage)
+            ] + zoneCols).joined(separator: ",")
+            rows.append(row)
+        }
+
+        // Season totals row
+        let totalZoneCols = zones.flatMap { zone -> [String] in
+            let saves = season.games.reduce(0) { $0 + $1.shotCount(zone: zone, outcome: .save) }
+            let goals = season.games.reduce(0) { $0 + $1.shotCount(zone: zone, outcome: .goal) }
+            return ["\(saves)", "\(goals)"]
+        }
+        let totals = ([
+            "\"SEASON TOTAL\"",
+            "\"\(season.name)\"",
+            "\(season.totalSaves)",
+            "\(season.totalGoalsAgainst)",
+            String(format: "%.1f", season.savePercentage),
+            "\(season.totalGroundBalls)",
+            "\(season.totalInterceptions)",
+            "\(season.totalClearAttempts)",
+            "\(season.totalSuccessfulClears)",
+            String(format: "%.1f", season.clearPercentage)
+        ] + totalZoneCols).joined(separator: ",")
+        rows.append(totals)
+
+        return rows.joined(separator: "\n")
     }
 }
