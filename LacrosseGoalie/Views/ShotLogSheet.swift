@@ -7,8 +7,9 @@ struct ShotLogSheet: View {
     @EnvironmentObject var store: DataStore
     @Environment(\.dismiss) var dismiss
 
-    let zone: CageZone?          // nil when shot-location tracking is off
-    let showOutcomePicker: Bool  // false when user already tapped Save/Goal button
+    let zone: CageZone?              // nil when shot-location tracking is off
+    let showOutcomePicker: Bool      // false when user already tapped Save/Goal button
+    let preselectedOutcome: ShotOutcome
     var onLog: (Shot) -> Void
 
     @State private var outcome: ShotOutcome
@@ -17,6 +18,7 @@ struct ShotLogSheet: View {
     init(zone: CageZone?, showOutcomePicker: Bool, preselectedOutcome: ShotOutcome = .save, onLog: @escaping (Shot) -> Void) {
         self.zone = zone
         self.showOutcomePicker = showOutcomePicker
+        self.preselectedOutcome = preselectedOutcome
         self._outcome = State(initialValue: preselectedOutcome)
         self.onLog = onLog
     }
@@ -130,6 +132,11 @@ struct ShotLogSheet: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
+        .onAppear {
+            // SwiftUI reuses the sheet view between presentations, so @State
+            // doesn't re-initialize automatically. Force-sync on every appearance.
+            outcome = preselectedOutcome
+        }
     }
 }
 
