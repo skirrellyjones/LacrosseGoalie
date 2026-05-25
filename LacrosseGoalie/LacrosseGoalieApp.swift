@@ -8,6 +8,7 @@ struct LacrosseGoalieApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(store)
+                .onAppear { store.applyColorScheme() }
         }
     }
 }
