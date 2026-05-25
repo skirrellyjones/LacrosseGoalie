@@ -8,6 +8,7 @@ struct LacrosseGoalieApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(store)
+                .preferredColorScheme(store.darkModeEnabled ? .dark : nil)
         }
     }
 }
