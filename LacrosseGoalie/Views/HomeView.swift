@@ -12,9 +12,11 @@ struct HomeView: View {
 
             // MARK: - Header
             VStack(spacing: 10) {
-                Image(systemName: "figure.lacrosse")
-                    .font(.system(size: 70))
-                    .foregroundColor(.green)
+                Image("LaunchLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 110, height: 110)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
                 Text("Lacrosse Goalie")
                     .font(.largeTitle.bold())
                 Text("Stat Tracker")
