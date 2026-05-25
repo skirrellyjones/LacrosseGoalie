@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import Combine
 
 /// Manages all game data and persists it to a JSON file in the app's Documents folder.

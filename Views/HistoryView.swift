@@ -10,11 +10,17 @@ struct HistoryView: View {
     var body: some View {
         Group {
             if store.games.isEmpty {
-                ContentUnavailableView(
-                    "No Games Yet",
-                    systemImage: "list.bullet.rectangle.portrait",
-                    description: Text("Complete a game to see it here.")
-                )
+                VStack(spacing: 16) {
+                    Spacer()
+                    Image(systemName: "list.bullet.rectangle.portrait")
+                        .font(.system(size: 52))
+                        .foregroundColor(.secondary)
+                    Text("No Games Yet")
+                        .font(.title2.bold())
+                    Text("Complete a game to see it here.")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
             } else {
                 List {
                     ForEach(sortedGames) { game in
