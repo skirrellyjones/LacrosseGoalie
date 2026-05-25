@@ -44,6 +44,5 @@ struct GameSetupView: View {
                 }
             }
         }
-        .preferredColorScheme(store.darkModeEnabled ? .dark : nil)
     }
 }

@@ -129,7 +129,6 @@ struct ShotLogSheet: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
-        .preferredColorScheme(store.darkModeEnabled ? .dark : nil)
     }
 }
 

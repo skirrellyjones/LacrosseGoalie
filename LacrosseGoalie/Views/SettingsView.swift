@@ -85,6 +85,5 @@ struct SettingsView: View {
                 Text("This cannot be undone.")
             }
         }
-        .preferredColorScheme(store.darkModeEnabled ? .dark : nil)
     }
 }
