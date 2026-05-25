@@ -1,7 +1,5 @@
 import Foundation
 import SwiftUI
-import UIKit
-import Combine
 
 /// Manages all game data and persists it to a JSON file in the app's Documents folder.
 class DataStore: ObservableObject {
@@ -20,10 +18,7 @@ class DataStore: ObservableObject {
 
     /// Whether to force dark mode regardless of system setting. Persisted via UserDefaults.
     @Published var darkModeEnabled: Bool {
-        didSet {
-            UserDefaults.standard.set(darkModeEnabled, forKey: "darkModeEnabled")
-            applyColorScheme()
-        }
+        didSet { UserDefaults.standard.set(darkModeEnabled, forKey: "darkModeEnabled") }
     }
 
     private let saveURL: URL
@@ -37,17 +32,6 @@ class DataStore: ObservableObject {
         saveURL = docs.appendingPathComponent("seasons.json")
 
         load()
-        applyColorScheme()
-    }
-
-    /// Directly sets overrideUserInterfaceStyle on every window so dark mode
-    /// applies instantly across all sheets and covers, not just the main view.
-    func applyColorScheme() {
-        let style: UIUserInterfaceStyle = darkModeEnabled ? .dark : .unspecified
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap { $0.windows }
-            .forEach { $0.overrideUserInterfaceStyle = style }
     }
 
     // MARK: - Persistence

@@ -22,6 +22,5 @@ struct ContentView: View {
                 pendingGame = nil
             }
         }
-        .preferredColorScheme(store.darkModeEnabled ? .dark : nil)
     }
 }
