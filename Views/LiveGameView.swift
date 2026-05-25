@@ -9,7 +9,6 @@ struct LiveGameView: View {
     @State private var selectedZone: CageZone? = nil
     @State private var preselectedOutcome: ShotOutcome = .save
     @State private var showingShotLog = false
-    @State private var showingEndHalfAlert = false
     @State private var showingEndGameAlert = false
 
     var body: some View {
@@ -22,22 +21,15 @@ struct LiveGameView: View {
                         .padding(.horizontal)
                         .padding(.top, 8)
 
-                    // Half indicator
-                    HStack {
-                        Label("Half \(game.currentHalf) of 2", systemImage: "clock")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                        Spacer()
-                        Text("vs \(game.opponent)")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                    .padding(.horizontal)
+                    // Opponent label
+                    Text("vs \(game.opponent)")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
 
                     // ── Shot entry: cage grid OR simple buttons ──────────────
                     if store.shotLocationEnabled {
-                        // Location ON → tap a zone on the cage
                         Text("Tap the zone where the shot went →")
                             .font(.footnote)
                             .foregroundColor(.secondary)
@@ -46,13 +38,12 @@ struct LiveGameView: View {
 
                         CageGridView(game: game) { zone in
                             selectedZone = zone
-                            preselectedOutcome = .save   // reset default
+                            preselectedOutcome = .save
                             showingShotLog = true
                         }
                         .padding(.horizontal)
 
                     } else {
-                        // Location OFF → two big Save / Goal buttons
                         Text("Log a shot:")
                             .font(.footnote)
                             .foregroundColor(.secondary)
@@ -60,21 +51,12 @@ struct LiveGameView: View {
                             .padding(.horizontal)
 
                         HStack(spacing: 12) {
-                            ShotButton(
-                                label: "Save",
-                                icon: "hand.raised.fill",
-                                color: .green
-                            ) {
+                            ShotButton(label: "Save", icon: "hand.raised.fill", color: .green) {
                                 selectedZone = nil
                                 preselectedOutcome = .save
                                 showingShotLog = true
                             }
-
-                            ShotButton(
-                                label: "Goal Against",
-                                icon: "xmark.circle.fill",
-                                color: .red
-                            ) {
+                            ShotButton(label: "Goal Against", icon: "xmark.circle.fill", color: .red) {
                                 selectedZone = nil
                                 preselectedOutcome = .goal
                                 showingShotLog = true
@@ -86,7 +68,6 @@ struct LiveGameView: View {
 
                     Divider().padding(.top, 4)
 
-                    // Clears & Ground Balls
                     VStack(spacing: 14) {
                         ClearTrackingView(game: $game)
                         GroundBallView(game: $game)
@@ -98,33 +79,21 @@ struct LiveGameView: View {
             .navigationTitle("Live Game")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("End Half") { showingEndHalfAlert = true }
-                        .foregroundColor(.orange)
-                        .disabled(game.currentHalf >= 2)
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("End Game") { showingEndGameAlert = true }
                         .foregroundColor(.red)
                 }
             }
         }
-        // Shot log sheet — zone is nil when location tracking is off
         .sheet(isPresented: $showingShotLog) {
             ShotLogSheet(
                 zone: selectedZone,
-                half: game.currentHalf,
+                half: 1,
                 preselectedOutcome: preselectedOutcome
             ) { shot in
                 game.shots.append(shot)
                 showingShotLog = false
             }
-        }
-        .alert("End Half \(game.currentHalf)?", isPresented: $showingEndHalfAlert) {
-            Button("Start 2nd Half") { game.currentHalf = 2 }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text(halfSummaryText(half: game.currentHalf))
         }
         .alert("End Game?", isPresented: $showingEndGameAlert) {
             Button("End Game", role: .destructive) {
@@ -135,13 +104,6 @@ struct LiveGameView: View {
         } message: {
             Text("Final: Saves \(game.totalSaves) · Goals \(game.totalGoalsAgainst) · Sv% \(String(format: "%.1f", game.savePercentage))%")
         }
-    }
-
-    private func halfSummaryText(half: Int) -> String {
-        let s   = game.saves(half: half)
-        let g   = game.goalsAgainst(half: half)
-        let pct = game.savePct(half: half)
-        return "Half \(half): \(s) saves · \(g) goals · \(String(format: "%.1f", pct))% Sv%"
     }
 }
 
@@ -231,7 +193,7 @@ struct ClearTrackingView: View {
 
             HStack(spacing: 10) {
                 Button {
-                    game.clears.append(Clear(wasSuccessful: true, half: game.currentHalf))
+                    game.clears.append(Clear(wasSuccessful: true, half: 1))
                 } label: {
                     Label("Clear ✓", systemImage: "checkmark.circle.fill")
                         .font(.subheadline.bold())
@@ -243,7 +205,7 @@ struct ClearTrackingView: View {
                 }
 
                 Button {
-                    game.clears.append(Clear(wasSuccessful: false, half: game.currentHalf))
+                    game.clears.append(Clear(wasSuccessful: false, half: 1))
                 } label: {
                     Label("Clear ✗", systemImage: "xmark.circle.fill")
                         .font(.subheadline.bold())

@@ -28,15 +28,6 @@ struct GameSummaryView: View {
                     StatRow("Clear %",        String(format: "%.1f%%  (\(game.successfulClears)/\(game.clearAttempts))", game.clearPercentage))
                 }
 
-                // Per-half breakdown
-                ForEach(1...2, id: \.self) { half in
-                    statsCard("Half \(half)") {
-                        StatRow("Saves",         "\(game.saves(half: half))")
-                        StatRow("Goals Against", "\(game.goalsAgainst(half: half))")
-                        StatRow("Save %",        String(format: "%.1f%%", game.savePct(half: half)))
-                    }
-                }
-
                 // Shot placement heatmap — only shown when zone data exists
                 if game.shots.contains(where: { $0.zone != nil }) {
                     GroupBox {
