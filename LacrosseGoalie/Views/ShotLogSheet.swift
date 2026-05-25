@@ -130,7 +130,7 @@ struct ShotLogSheet: View {
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.large])
         .presentationDragIndicator(.visible)
         .onAppear {
             // SwiftUI reuses the sheet view between presentations, so @State
