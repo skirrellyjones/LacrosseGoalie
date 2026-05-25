@@ -1,14 +1,22 @@
 import SwiftUI
 
+/// Bundles everything the shot log sheet needs into one value.
+/// Using .sheet(item:) guarantees a fresh ShotLogSheet instance
+/// every time — no stale @State from a previous presentation.
+struct ShotLogContext: Identifiable {
+    let id = UUID()
+    let zone: CageZone?
+    let preselectedOutcome: ShotOutcome
+    let showOutcomePicker: Bool
+}
+
 /// The main in-game tracking screen.
 struct LiveGameView: View {
     @EnvironmentObject var store: DataStore
     @State var game: Game
     var onComplete: (Game) -> Void
 
-    @State private var selectedZone: CageZone? = nil
-    @State private var preselectedOutcome: ShotOutcome = .save
-    @State private var showingShotLog = false
+    @State private var shotLogContext: ShotLogContext? = nil
     @State private var showingEndGameAlert = false
 
     var body: some View {
@@ -37,9 +45,11 @@ struct LiveGameView: View {
                             .padding(.horizontal)
 
                         CageGridView(game: game) { zone in
-                            selectedZone = zone
-                            preselectedOutcome = .save
-                            showingShotLog = true
+                            shotLogContext = ShotLogContext(
+                                zone: zone,
+                                preselectedOutcome: .save,
+                                showOutcomePicker: true
+                            )
                         }
                         .padding(.horizontal)
 
@@ -52,14 +62,18 @@ struct LiveGameView: View {
 
                         HStack(spacing: 12) {
                             ShotButton(label: "Save", icon: "hand.raised.fill", color: .green) {
-                                selectedZone = nil
-                                preselectedOutcome = .save
-                                showingShotLog = true
+                                shotLogContext = ShotLogContext(
+                                    zone: nil,
+                                    preselectedOutcome: .save,
+                                    showOutcomePicker: false
+                                )
                             }
                             ShotButton(label: "Goal Against", icon: "xmark.circle.fill", color: .red) {
-                                selectedZone = nil
-                                preselectedOutcome = .goal
-                                showingShotLog = true
+                                shotLogContext = ShotLogContext(
+                                    zone: nil,
+                                    preselectedOutcome: .goal,
+                                    showOutcomePicker: false
+                                )
                             }
                         }
                         .padding(.horizontal)
@@ -86,14 +100,14 @@ struct LiveGameView: View {
                 }
             }
         }
-        .sheet(isPresented: $showingShotLog) {
+        .sheet(item: $shotLogContext) { context in
             ShotLogSheet(
-                zone: selectedZone,
-                showOutcomePicker: store.shotLocationEnabled, // cage tap = user picks outcome in sheet; button tap = already chosen
-                preselectedOutcome: preselectedOutcome
+                zone: context.zone,
+                showOutcomePicker: context.showOutcomePicker,
+                preselectedOutcome: context.preselectedOutcome
             ) { shot in
                 game.shots.append(shot)
-                showingShotLog = false
+                shotLogContext = nil
             }
         }
         .alert("End Game?", isPresented: $showingEndGameAlert) {
