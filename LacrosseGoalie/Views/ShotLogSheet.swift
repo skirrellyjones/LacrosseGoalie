@@ -1,23 +1,22 @@
 import SwiftUI
 
 /// Bottom sheet for logging a shot.
-/// - When shot location is ON:  `zone` is set, outcome defaults to .save
-/// - When shot location is OFF: `zone` is nil, outcome is pre-selected by whichever button was tapped
+/// - When shot location is ON:  `zone` is set, outcome selector is shown (user picks Save/Goal here)
+/// - When shot location is OFF: `zone` is nil, outcome was already chosen — selector is hidden
 struct ShotLogSheet: View {
     @EnvironmentObject var store: DataStore
     @Environment(\.dismiss) var dismiss
 
-    let zone: CageZone?      // nil when shot-location tracking is off
-    let half: Int
+    let zone: CageZone?          // nil when shot-location tracking is off
+    let showOutcomePicker: Bool  // false when user already tapped Save/Goal button
     var onLog: (Shot) -> Void
 
     @State private var outcome: ShotOutcome
     @State private var type: ShotType = .outside
 
-    /// Use this init to pre-select the outcome (e.g. when the user tapped "Save" or "Goal" directly)
-    init(zone: CageZone?, half: Int, preselectedOutcome: ShotOutcome = .save, onLog: @escaping (Shot) -> Void) {
+    init(zone: CageZone?, showOutcomePicker: Bool, preselectedOutcome: ShotOutcome = .save, onLog: @escaping (Shot) -> Void) {
         self.zone = zone
-        self.half = half
+        self.showOutcomePicker = showOutcomePicker
         self._outcome = State(initialValue: preselectedOutcome)
         self.onLog = onLog
     }
@@ -33,40 +32,41 @@ struct ShotLogSheet: View {
                             .foregroundColor(.secondary)
                         Text("Zone: \(zone.label)")
                             .font(.headline)
-                        Text("· Half \(half)")
-                            .foregroundColor(.secondary)
                     }
                     .padding()
                     Divider()
                 }
 
-                // Outcome selector (always shown)
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Outcome")
-                        .font(.subheadline.bold())
-                        .foregroundColor(.secondary)
+                // Outcome selector — only shown when location is ON (cage grid tap)
+                // Hidden when location is OFF because the user already chose Save or Goal
+                if showOutcomePicker {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Outcome")
+                            .font(.subheadline.bold())
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal)
+
+                        HStack(spacing: 12) {
+                            OutcomeButton(
+                                label: "Save",
+                                icon: "hand.raised.fill",
+                                color: .green,
+                                isSelected: outcome == .save
+                            ) { outcome = .save }
+
+                            OutcomeButton(
+                                label: "Goal Against",
+                                icon: "xmark.circle.fill",
+                                color: .red,
+                                isSelected: outcome == .goal
+                            ) { outcome = .goal }
+                        }
                         .padding(.horizontal)
-
-                    HStack(spacing: 12) {
-                        OutcomeButton(
-                            label: "Save",
-                            icon: "hand.raised.fill",
-                            color: .green,
-                            isSelected: outcome == .save
-                        ) { outcome = .save }
-
-                        OutcomeButton(
-                            label: "Goal Against",
-                            icon: "xmark.circle.fill",
-                            color: .red,
-                            isSelected: outcome == .goal
-                        ) { outcome = .goal }
                     }
-                    .padding(.horizontal)
-                }
-                .padding(.top, 16)
+                    .padding(.top, 16)
 
-                Divider().padding(.vertical, 14)
+                    Divider().padding(.vertical, 14)
+                }
 
                 // Shot type selector
                 VStack(alignment: .leading, spacing: 10) {
@@ -97,12 +97,13 @@ struct ShotLogSheet: View {
                         }
                     }
                 }
+                .padding(.top, showOutcomePicker ? 0 : 16)
 
                 Spacer()
 
                 // Log button
                 Button {
-                    let shot = Shot(zone: zone, outcome: outcome, type: type, half: half)
+                    let shot = Shot(zone: zone, outcome: outcome, type: type, half: 1)
                     onLog(shot)
                 } label: {
                     HStack {
@@ -119,7 +120,7 @@ struct ShotLogSheet: View {
                 }
                 .padding(.bottom, 24)
             }
-            .navigationTitle(zone != nil ? "Log Shot" : "Log Shot · Half \(half)")
+            .navigationTitle("Log Shot")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

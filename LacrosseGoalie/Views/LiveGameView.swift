@@ -89,7 +89,7 @@ struct LiveGameView: View {
         .sheet(isPresented: $showingShotLog) {
             ShotLogSheet(
                 zone: selectedZone,
-                half: 1,
+                showOutcomePicker: store.shotLocationEnabled, // cage tap = user picks outcome in sheet; button tap = already chosen
                 preselectedOutcome: preselectedOutcome
             ) { shot in
                 game.shots.append(shot)
