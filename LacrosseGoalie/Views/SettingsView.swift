@@ -21,12 +21,19 @@ struct SettingsView: View {
 
                 Section {
                     Toggle("Track Shot Location", isOn: $store.shotLocationEnabled)
+                    if !store.shotLocationEnabled {
+                        Toggle("Express Mode", isOn: $store.expressModeEnabled)
+                    }
                 } header: {
                     Text("Shot Tracking")
                 } footer: {
-                    Text(store.shotLocationEnabled
-                        ? "The goal cage grid is shown during games. Tap a zone to log where the shot went."
-                        : "Shot location is not tracked. Use the Save / Goal buttons to log shots quickly.")
+                    if store.shotLocationEnabled {
+                        Text("The goal cage grid is shown during games. Tap a zone to log where the shot went.")
+                    } else if store.expressModeEnabled {
+                        Text("Tap Save or Goal Against to log a shot instantly — no prompt, no shot type.")
+                    } else {
+                        Text("Shot location is not tracked. Tap Save or Goal Against to log shots.")
+                    }
                 }
 
                 Section {

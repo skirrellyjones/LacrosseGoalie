@@ -62,18 +62,26 @@ struct LiveGameView: View {
 
                         HStack(spacing: 12) {
                             ShotButton(label: "Save", icon: "hand.raised.fill", color: .green) {
-                                shotLogContext = ShotLogContext(
-                                    zone: nil,
-                                    preselectedOutcome: .save,
-                                    showOutcomePicker: false
-                                )
+                                if store.expressModeEnabled {
+                                    game.shots.append(Shot(zone: nil, outcome: .save, type: .outside, half: 1))
+                                } else {
+                                    shotLogContext = ShotLogContext(
+                                        zone: nil,
+                                        preselectedOutcome: .save,
+                                        showOutcomePicker: false
+                                    )
+                                }
                             }
                             ShotButton(label: "Goal Against", icon: "xmark.circle.fill", color: .red) {
-                                shotLogContext = ShotLogContext(
-                                    zone: nil,
-                                    preselectedOutcome: .goal,
-                                    showOutcomePicker: false
-                                )
+                                if store.expressModeEnabled {
+                                    game.shots.append(Shot(zone: nil, outcome: .goal, type: .outside, half: 1))
+                                } else {
+                                    shotLogContext = ShotLogContext(
+                                        zone: nil,
+                                        preselectedOutcome: .goal,
+                                        showOutcomePicker: false
+                                    )
+                                }
                             }
                         }
                         .padding(.horizontal)

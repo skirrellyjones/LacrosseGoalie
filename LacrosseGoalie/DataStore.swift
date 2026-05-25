@@ -19,6 +19,11 @@ class DataStore: ObservableObject {
         didSet { UserDefaults.standard.set(shotLocationEnabled, forKey: "shotLocationEnabled") }
     }
 
+    /// Whether Save/Goal buttons log instantly with no popup. Persisted via UserDefaults.
+    @Published var expressModeEnabled: Bool {
+        didSet { UserDefaults.standard.set(expressModeEnabled, forKey: "expressModeEnabled") }
+    }
+
     /// Whether to force dark mode regardless of system setting. Persisted via UserDefaults.
     @Published var darkModeEnabled: Bool {
         didSet {
@@ -33,6 +38,7 @@ class DataStore: ObservableObject {
         historyEnabled = UserDefaults.standard.bool(forKey: "historyEnabled")
         shotLocationEnabled = UserDefaults.standard.object(forKey: "shotLocationEnabled") as? Bool ?? true
         darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
+        expressModeEnabled = UserDefaults.standard.bool(forKey: "expressModeEnabled")
 
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         saveURL = docs.appendingPathComponent("seasons.json")
