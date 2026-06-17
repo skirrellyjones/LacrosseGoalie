@@ -117,6 +117,14 @@ struct LiveGameView: View {
             .navigationTitle("Live Game")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        game.shots.removeLast()
+                    } label: {
+                        Label("Undo Shot", systemImage: "arrow.uturn.backward")
+                    }
+                    .disabled(game.shots.isEmpty)
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("End Game") { showingEndGameAlert = true }
                         .foregroundColor(.red)
@@ -234,6 +242,14 @@ struct ClearTrackingView: View {
                 Text("\(game.successfulClears) / \(game.clearAttempts)  (\(String(format: "%.0f%%", game.clearPercentage)))")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
+                Button {
+                    game.clears.removeLast()
+                } label: {
+                    Image(systemName: "arrow.uturn.backward")
+                        .font(.subheadline)
+                        .foregroundColor(game.clears.isEmpty ? .secondary.opacity(0.3) : .secondary)
+                }
+                .disabled(game.clears.isEmpty)
             }
 
             HStack(spacing: 10) {

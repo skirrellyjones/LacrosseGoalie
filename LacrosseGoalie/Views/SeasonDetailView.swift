@@ -50,6 +50,13 @@ struct SeasonDetailView: View {
                                 } label: {
                                     GameRowView(game: game)
                                 }
+                                .swipeActions(edge: .trailing) {
+                                    Button(role: .destructive) {
+                                        store.deleteGame(id: game.id, fromSeasonId: liveSeason.id)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                                 if game.id != sortedGames.last?.id {
                                     Divider()
                                 }

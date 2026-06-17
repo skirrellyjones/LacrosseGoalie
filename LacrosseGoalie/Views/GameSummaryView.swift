@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct GameSummaryView: View {
     let game: Game
@@ -29,6 +30,20 @@ struct GameSummaryView: View {
                     StatRow("Clear %",        String(format: "%.1f%%  (\(game.successfulClears)/\(game.clearAttempts))", game.clearPercentage))
                 }
 
+                // Per-half breakdown — only shown when 2nd-half shots exist
+                if game.shots.contains(where: { $0.half == 2 }) {
+                    statsCard("1st Half") {
+                        StatRow("Saves",    "\(game.saves(half: 1))")
+                        StatRow("Goals",    "\(game.goalsAgainst(half: 1))")
+                        StatRow("Save %",   String(format: "%.1f%%", game.savePct(half: 1)))
+                    }
+                    statsCard("2nd Half") {
+                        StatRow("Saves",    "\(game.saves(half: 2))")
+                        StatRow("Goals",    "\(game.goalsAgainst(half: 2))")
+                        StatRow("Save %",   String(format: "%.1f%%", game.savePct(half: 2)))
+                    }
+                }
+
                 // Shot placement heatmap — only shown when zone data exists
                 if game.shots.contains(where: { $0.zone != nil }) {
                     GroupBox {
@@ -49,6 +64,36 @@ struct GameSummaryView: View {
             .padding()
         }
         .navigationTitle("Game Summary")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    shareSummary()
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+            }
+        }
+    }
+
+    private func shareSummary() {
+        var lines = ["vs \(game.opponent) | \(game.formattedDate)"]
+        lines.append(String(format: "Save %%: %.1f%% (%d saves, %d goals)", game.savePercentage, game.totalSaves, game.totalGoalsAgainst))
+        if game.clearAttempts > 0 {
+            lines.append(String(format: "Clear %%: %.0f%% (%d/%d)", game.clearPercentage, game.successfulClears, game.clearAttempts))
+        }
+        lines.append("Ground Balls: \(game.groundBalls) | Interceptions: \(game.interceptions)")
+        if game.shots.contains(where: { $0.half == 2 }) {
+            lines.append(String(format: "1st Half: %dS %dGA (%.1f%%) | 2nd Half: %dS %dGA (%.1f%%)",
+                game.saves(half: 1), game.goalsAgainst(half: 1), game.savePct(half: 1),
+                game.saves(half: 2), game.goalsAgainst(half: 2), game.savePct(half: 2)))
+        }
+        let text = lines.joined(separator: "\n")
+        let av = UIActivityViewController(activityItems: [text], applicationActivities: nil)
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let root = windowScene.windows.first?.rootViewController else { return }
+        var top = root
+        while let next = top.presentedViewController { top = next }
+        top.present(av, animated: true)
     }
 
     @ViewBuilder
