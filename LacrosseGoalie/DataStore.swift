@@ -118,7 +118,9 @@ class DataStore: ObservableObject {
 
         let header = (["Date", "Opponent", "Saves", "Goals Against", "Save%",
                         "Ground Balls", "Interceptions",
-                        "Clear Attempts", "Successful Clears", "Clear%"] + zoneHeaders)
+                        "Clear Attempts", "Successful Clears", "Clear%",
+                        "1H-Saves", "1H-Goals", "1H-Sv%",
+                        "2H-Saves", "2H-Goals", "2H-Sv%"] + zoneHeaders)
             .joined(separator: ",")
 
         var rows: [String] = [header]
@@ -138,7 +140,13 @@ class DataStore: ObservableObject {
                 "\(game.interceptions)",
                 "\(game.clearAttempts)",
                 "\(game.successfulClears)",
-                String(format: "%.1f", game.clearPercentage)
+                String(format: "%.1f", game.clearPercentage),
+                "\(game.saves(half: 1))",
+                "\(game.goalsAgainst(half: 1))",
+                String(format: "%.1f", game.savePct(half: 1)),
+                "\(game.saves(half: 2))",
+                "\(game.goalsAgainst(half: 2))",
+                String(format: "%.1f", game.savePct(half: 2))
             ] + zoneCols).joined(separator: ",")
             rows.append(row)
         }
