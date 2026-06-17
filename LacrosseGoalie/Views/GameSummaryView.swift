@@ -44,6 +44,21 @@ struct GameSummaryView: View {
                     }
                 }
 
+                // Shot type breakdown — only shown when shots exist
+                if !game.shots.isEmpty {
+                    statsCard("Shot Types") {
+                        ForEach(ShotType.allCases, id: \.self) { type in
+                            let typeShots = game.shots.filter { $0.type == type }
+                            if !typeShots.isEmpty {
+                                let saves = typeShots.filter { $0.outcome == .save }.count
+                                let goals = typeShots.filter { $0.outcome == .goal }.count
+                                let pct = Double(saves) / Double(typeShots.count) * 100
+                                StatRow(type.rawValue, String(format: "%dS %dGA  %.0f%%", saves, goals, pct))
+                            }
+                        }
+                    }
+                }
+
                 // Shot placement heatmap — only shown when zone data exists
                 if game.shots.contains(where: { $0.zone != nil }) {
                     GroupBox {
