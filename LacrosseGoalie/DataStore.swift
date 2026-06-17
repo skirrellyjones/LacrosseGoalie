@@ -38,7 +38,7 @@ class DataStore: ObservableObject {
         historyEnabled = UserDefaults.standard.bool(forKey: "historyEnabled")
         shotLocationEnabled = UserDefaults.standard.object(forKey: "shotLocationEnabled") as? Bool ?? true
         darkModeEnabled = UserDefaults.standard.bool(forKey: "darkModeEnabled")
-        expressModeEnabled = UserDefaults.standard.bool(forKey: "expressModeEnabled")
+        expressModeEnabled = UserDefaults.standard.object(forKey: "expressModeEnabled") as? Bool ?? true
 
         let docs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         saveURL = docs.appendingPathComponent("seasons.json")
