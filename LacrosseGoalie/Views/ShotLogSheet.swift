@@ -10,15 +10,17 @@ struct ShotLogSheet: View {
     let zone: CageZone?              // nil when shot-location tracking is off
     let showOutcomePicker: Bool      // false when user already tapped Save/Goal button
     let preselectedOutcome: ShotOutcome
+    let half: Int
     var onLog: (Shot) -> Void
 
     @State private var outcome: ShotOutcome
     @State private var type: ShotType = .outside
 
-    init(zone: CageZone?, showOutcomePicker: Bool, preselectedOutcome: ShotOutcome = .save, onLog: @escaping (Shot) -> Void) {
+    init(zone: CageZone?, showOutcomePicker: Bool, preselectedOutcome: ShotOutcome = .save, half: Int = 1, onLog: @escaping (Shot) -> Void) {
         self.zone = zone
         self.showOutcomePicker = showOutcomePicker
         self.preselectedOutcome = preselectedOutcome
+        self.half = half
         self._outcome = State(initialValue: preselectedOutcome)
         self.onLog = onLog
     }
@@ -105,7 +107,7 @@ struct ShotLogSheet: View {
 
                 // Log button
                 Button {
-                    let shot = Shot(zone: zone, outcome: outcome, type: type, half: 1)
+                    let shot = Shot(zone: zone, outcome: outcome, type: type, half: half)
                     onLog(shot)
                 } label: {
                     HStack {

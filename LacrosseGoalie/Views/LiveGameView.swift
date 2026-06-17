@@ -8,6 +8,7 @@ struct ShotLogContext: Identifiable {
     let zone: CageZone?
     let preselectedOutcome: ShotOutcome
     let showOutcomePicker: Bool
+    let half: Int
 }
 
 /// The main in-game tracking screen.
@@ -18,6 +19,7 @@ struct LiveGameView: View {
 
     @State private var shotLogContext: ShotLogContext? = nil
     @State private var showingEndGameAlert = false
+    @State private var showingHalfAlert = false
 
     var body: some View {
         NavigationStack {
@@ -29,12 +31,22 @@ struct LiveGameView: View {
                         .padding(.horizontal)
                         .padding(.top, 8)
 
-                    // Opponent label
-                    Text("vs \(game.opponent)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal)
+                    // Opponent label + half indicator
+                    HStack {
+                        Text("vs \(game.opponent)")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Spacer()
+                        Text(game.currentHalf == 1 ? "1st Half" : "2nd Half")
+                            .font(.subheadline.bold())
+                            .foregroundColor(.secondary)
+                        if game.currentHalf == 1 {
+                            Button("→ 2nd Half") { showingHalfAlert = true }
+                                .font(.subheadline)
+                                .foregroundColor(.orange)
+                        }
+                    }
+                    .padding(.horizontal)
 
                     // ── Shot entry: cage grid OR simple buttons ──────────────
                     if store.shotLocationEnabled {
@@ -48,7 +60,8 @@ struct LiveGameView: View {
                             shotLogContext = ShotLogContext(
                                 zone: zone,
                                 preselectedOutcome: .save,
-                                showOutcomePicker: true
+                                showOutcomePicker: true,
+                                half: game.currentHalf
                             )
                         }
                         .padding(.horizontal)
@@ -63,23 +76,25 @@ struct LiveGameView: View {
                         HStack(spacing: 12) {
                             ShotButton(label: "Save", icon: "hand.raised.fill", color: .green) {
                                 if store.expressModeEnabled {
-                                    game.shots.append(Shot(zone: nil, outcome: .save, type: .outside, half: 1))
+                                    game.shots.append(Shot(zone: nil, outcome: .save, type: .outside, half: game.currentHalf))
                                 } else {
                                     shotLogContext = ShotLogContext(
                                         zone: nil,
                                         preselectedOutcome: .save,
-                                        showOutcomePicker: false
+                                        showOutcomePicker: false,
+                                        half: game.currentHalf
                                     )
                                 }
                             }
                             ShotButton(label: "Goal Against", icon: "xmark.circle.fill", color: .red) {
                                 if store.expressModeEnabled {
-                                    game.shots.append(Shot(zone: nil, outcome: .goal, type: .outside, half: 1))
+                                    game.shots.append(Shot(zone: nil, outcome: .goal, type: .outside, half: game.currentHalf))
                                 } else {
                                     shotLogContext = ShotLogContext(
                                         zone: nil,
                                         preselectedOutcome: .goal,
-                                        showOutcomePicker: false
+                                        showOutcomePicker: false,
+                                        half: game.currentHalf
                                     )
                                 }
                             }
@@ -112,11 +127,18 @@ struct LiveGameView: View {
             ShotLogSheet(
                 zone: context.zone,
                 showOutcomePicker: context.showOutcomePicker,
-                preselectedOutcome: context.preselectedOutcome
+                preselectedOutcome: context.preselectedOutcome,
+                half: context.half
             ) { shot in
                 game.shots.append(shot)
                 shotLogContext = nil
             }
+        }
+        .alert("Start 2nd Half?", isPresented: $showingHalfAlert) {
+            Button("Start 2nd Half") { game.currentHalf = 2 }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("All future shots and clears will be logged to the 2nd half.")
         }
         .alert("End Game?", isPresented: $showingEndGameAlert) {
             Button("End Game", role: .destructive) {
@@ -216,7 +238,7 @@ struct ClearTrackingView: View {
 
             HStack(spacing: 10) {
                 Button {
-                    game.clears.append(Clear(wasSuccessful: true, half: 1))
+                    game.clears.append(Clear(wasSuccessful: true, half: game.currentHalf))
                 } label: {
                     Label("Clear ✓", systemImage: "checkmark.circle.fill")
                         .font(.subheadline.bold())
@@ -228,7 +250,7 @@ struct ClearTrackingView: View {
                 }
 
                 Button {
-                    game.clears.append(Clear(wasSuccessful: false, half: 1))
+                    game.clears.append(Clear(wasSuccessful: false, half: game.currentHalf))
                 } label: {
                     Label("Clear ✗", systemImage: "xmark.circle.fill")
                         .font(.subheadline.bold())
