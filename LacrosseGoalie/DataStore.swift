@@ -54,8 +54,8 @@ class DataStore: ObservableObject {
     func applyColorScheme() {
         let style: UIUserInterfaceStyle = darkModeEnabled ? .dark : .unspecified
         for scene in UIApplication.shared.connectedScenes {
-            guard let ws = scene as? UIWindowScene else { continue }
-            for window in ws.windows {
+            guard let windowScene = scene as? UIWindowScene else { continue }
+            for window in windowScene.windows {
                 window.overrideUserInterfaceStyle = style
             }
         }
@@ -124,40 +124,46 @@ class DataStore: ObservableObject {
             .joined(separator: ",")
 
         var rows: [String] = [header]
-
         for game in season.games.sorted(by: { $0.date < $1.date }) {
-            let zoneCols = zones.flatMap { zone in
-                ["\(game.shotCount(zone: zone, outcome: .save))",
-                 "\(game.shotCount(zone: zone, outcome: .goal))"]
-            }
-            let row = ([
-                "\"\(game.formattedDate)\"",
-                "\"\(game.opponent)\"",
-                "\(game.totalSaves)",
-                "\(game.totalGoalsAgainst)",
-                String(format: "%.1f", game.savePercentage),
-                "\(game.groundBalls)",
-                "\(game.interceptions)",
-                "\(game.clearAttempts)",
-                "\(game.successfulClears)",
-                String(format: "%.1f", game.clearPercentage),
-                "\(game.saves(half: 1))",
-                "\(game.goalsAgainst(half: 1))",
-                String(format: "%.1f", game.savePct(half: 1)),
-                "\(game.saves(half: 2))",
-                "\(game.goalsAgainst(half: 2))",
-                String(format: "%.1f", game.savePct(half: 2))
-            ] + zoneCols).joined(separator: ",")
-            rows.append(row)
+            rows.append(csvRow(for: game, zones: zones))
         }
+        rows.append(csvTotalsRow(for: season, zones: zones))
 
-        // Season totals row
+        return rows.joined(separator: "\n")
+    }
+
+    private func csvRow(for game: Game, zones: [CageZone]) -> String {
+        let zoneCols = zones.flatMap { zone in
+            ["\(game.shotCount(zone: zone, outcome: .save))",
+             "\(game.shotCount(zone: zone, outcome: .goal))"]
+        }
+        return ([
+            "\"\(game.formattedDate)\"",
+            "\"\(game.opponent)\"",
+            "\(game.totalSaves)",
+            "\(game.totalGoalsAgainst)",
+            String(format: "%.1f", game.savePercentage),
+            "\(game.groundBalls)",
+            "\(game.interceptions)",
+            "\(game.clearAttempts)",
+            "\(game.successfulClears)",
+            String(format: "%.1f", game.clearPercentage),
+            "\(game.saves(half: 1))",
+            "\(game.goalsAgainst(half: 1))",
+            String(format: "%.1f", game.savePct(half: 1)),
+            "\(game.saves(half: 2))",
+            "\(game.goalsAgainst(half: 2))",
+            String(format: "%.1f", game.savePct(half: 2))
+        ] + zoneCols).joined(separator: ",")
+    }
+
+    private func csvTotalsRow(for season: Season, zones: [CageZone]) -> String {
         let totalZoneCols = zones.flatMap { zone -> [String] in
             let saves = season.games.reduce(0) { $0 + $1.shotCount(zone: zone, outcome: .save) }
             let goals = season.games.reduce(0) { $0 + $1.shotCount(zone: zone, outcome: .goal) }
             return ["\(saves)", "\(goals)"]
         }
-        let totals = ([
+        return ([
             "\"SEASON TOTAL\"",
             "\"\(season.name)\"",
             "\(season.totalSaves)",
@@ -169,8 +175,5 @@ class DataStore: ObservableObject {
             "\(season.totalSuccessfulClears)",
             String(format: "%.1f", season.clearPercentage)
         ] + totalZoneCols).joined(separator: ",")
-        rows.append(totals)
-
-        return rows.joined(separator: "\n")
     }
 }

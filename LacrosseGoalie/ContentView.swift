@@ -2,8 +2,8 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var store: DataStore
-    @State private var activeGame: Game? = nil
-    @State private var pendingGame: Game? = nil  // waiting for season assignment
+    @State private var activeGame: Game?
+    @State private var pendingGame: Game?  // waiting for season assignment
 
     var body: some View {
         NavigationStack {

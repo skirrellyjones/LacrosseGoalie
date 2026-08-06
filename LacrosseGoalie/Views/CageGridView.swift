@@ -73,8 +73,8 @@ struct CageZoneCell: View {
     /// Color the zone based on what happened there: green = mostly saves, red = mostly goals
     private var fill: Color {
         guard total > 0 else { return Color.white.opacity(0.08) }
-        if goals > saves  { return Color.red.opacity(0.55) }
-        if saves > goals  { return Color.green.opacity(0.45) }
+        if goals > saves { return Color.red.opacity(0.55) }
+        if saves > goals { return Color.green.opacity(0.45) }
         return Color.yellow.opacity(0.45)
     }
 

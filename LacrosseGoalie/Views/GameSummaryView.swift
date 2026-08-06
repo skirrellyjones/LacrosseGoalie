@@ -22,25 +22,28 @@ struct GameSummaryView: View {
 
                 // Overall stats card
                 statsCard("Overall") {
-                    StatRow("Saves",          "\(game.totalSaves)")
-                    StatRow("Goals Against",  "\(game.totalGoalsAgainst)")
-                    StatRow("Save %",         String(format: "%.1f%%", game.savePercentage))
-                    StatRow("Ground Balls",   "\(game.groundBalls)")
-                    StatRow("Interceptions",  "\(game.interceptions)")
-                    StatRow("Clear %",        String(format: "%.1f%%  (\(game.successfulClears)/\(game.clearAttempts))", game.clearPercentage))
+                    StatRow("Saves", "\(game.totalSaves)")
+                    StatRow("Goals Against", "\(game.totalGoalsAgainst)")
+                    StatRow("Save %", String(format: "%.1f%%", game.savePercentage))
+                    StatRow("Ground Balls", "\(game.groundBalls)")
+                    StatRow("Interceptions", "\(game.interceptions)")
+                    StatRow(
+                        "Clear %",
+                        String(format: "%.1f%%  (\(game.successfulClears)/\(game.clearAttempts))", game.clearPercentage)
+                    )
                 }
 
                 // Per-half breakdown — only shown when 2nd-half shots exist
                 if game.shots.contains(where: { $0.half == 2 }) {
                     statsCard("1st Half") {
-                        StatRow("Saves",    "\(game.saves(half: 1))")
-                        StatRow("Goals",    "\(game.goalsAgainst(half: 1))")
-                        StatRow("Save %",   String(format: "%.1f%%", game.savePct(half: 1)))
+                        StatRow("Saves", "\(game.saves(half: 1))")
+                        StatRow("Goals", "\(game.goalsAgainst(half: 1))")
+                        StatRow("Save %", String(format: "%.1f%%", game.savePct(half: 1)))
                     }
                     statsCard("2nd Half") {
-                        StatRow("Saves",    "\(game.saves(half: 2))")
-                        StatRow("Goals",    "\(game.goalsAgainst(half: 2))")
-                        StatRow("Save %",   String(format: "%.1f%%", game.savePct(half: 2)))
+                        StatRow("Saves", "\(game.saves(half: 2))")
+                        StatRow("Goals", "\(game.goalsAgainst(half: 2))")
+                        StatRow("Save %", String(format: "%.1f%%", game.savePct(half: 2)))
                     }
                 }
 
@@ -92,9 +95,15 @@ struct GameSummaryView: View {
 
     private func shareSummary() {
         var lines = ["vs \(game.opponent) | \(game.formattedDate)"]
-        lines.append(String(format: "Save %%: %.1f%% (%d saves, %d goals)", game.savePercentage, game.totalSaves, game.totalGoalsAgainst))
+        lines.append(String(
+            format: "Save %%: %.1f%% (%d saves, %d goals)",
+            game.savePercentage, game.totalSaves, game.totalGoalsAgainst
+        ))
         if game.clearAttempts > 0 {
-            lines.append(String(format: "Clear %%: %.0f%% (%d/%d)", game.clearPercentage, game.successfulClears, game.clearAttempts))
+            lines.append(String(
+                format: "Clear %%: %.0f%% (%d/%d)",
+                game.clearPercentage, game.successfulClears, game.clearAttempts
+            ))
         }
         lines.append("Ground Balls: \(game.groundBalls) | Interceptions: \(game.interceptions)")
         if game.shots.contains(where: { $0.half == 2 }) {
@@ -103,12 +112,12 @@ struct GameSummaryView: View {
                 game.saves(half: 2), game.goalsAgainst(half: 2), game.savePct(half: 2)))
         }
         let text = lines.joined(separator: "\n")
-        let av = UIActivityViewController(activityItems: [text], applicationActivities: nil)
+        let activityVC = UIActivityViewController(activityItems: [text], applicationActivities: nil)
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let root = windowScene.windows.first?.rootViewController else { return }
         var top = root
         while let next = top.presentedViewController { top = next }
-        top.present(av, animated: true)
+        top.present(activityVC, animated: true)
     }
 
     @ViewBuilder
@@ -191,8 +200,8 @@ struct MiniCageView: View {
     private func miniCellColor(saves: Int, goals: Int) -> Color {
         let total = saves + goals
         if total == 0 { return Color.gray.opacity(0.3) }
-        if goals > saves  { return .red.opacity(0.7) }
-        if saves > goals  { return .green.opacity(0.65) }
+        if goals > saves { return .red.opacity(0.7) }
+        if saves > goals { return .green.opacity(0.65) }
         return .yellow.opacity(0.6)
     }
 }

@@ -20,13 +20,19 @@ struct SeasonDetailView: View {
 
                 // Stats Card
                 GroupBox {
-                    StatRow("Games Played",   "\(liveSeason.games.count)")
-                    StatRow("Saves",          "\(liveSeason.totalSaves)")
-                    StatRow("Goals Against",  "\(liveSeason.totalGoalsAgainst)")
-                    StatRow("Save %",         String(format: "%.1f%%", liveSeason.savePercentage))
-                    StatRow("Ground Balls",   "\(liveSeason.totalGroundBalls)")
-                    StatRow("Interceptions",  "\(liveSeason.totalInterceptions)")
-                    StatRow("Clear %",        String(format: "%.1f%%  (\(liveSeason.totalSuccessfulClears)/\(liveSeason.totalClearAttempts))", liveSeason.clearPercentage))
+                    StatRow("Games Played", "\(liveSeason.games.count)")
+                    StatRow("Saves", "\(liveSeason.totalSaves)")
+                    StatRow("Goals Against", "\(liveSeason.totalGoalsAgainst)")
+                    StatRow("Save %", String(format: "%.1f%%", liveSeason.savePercentage))
+                    StatRow("Ground Balls", "\(liveSeason.totalGroundBalls)")
+                    StatRow("Interceptions", "\(liveSeason.totalInterceptions)")
+                    StatRow(
+                        "Clear %",
+                        String(
+                            format: "%.1f%%  (\(liveSeason.totalSuccessfulClears)/\(liveSeason.totalClearAttempts))",
+                            liveSeason.clearPercentage
+                        )
+                    )
                 } label: {
                     Text("Season Stats").font(.headline)
                 }
@@ -92,7 +98,7 @@ struct SeasonDetailView: View {
         let tmp = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
         try? csv.write(to: tmp, atomically: true, encoding: .utf8)
 
-        let av = UIActivityViewController(activityItems: [tmp], applicationActivities: nil)
+        let activityVC = UIActivityViewController(activityItems: [tmp], applicationActivities: nil)
 
         // Walk up to the topmost presented view controller so the share sheet
         // is presented correctly even when inside a NavigationStack.
@@ -100,7 +106,7 @@ struct SeasonDetailView: View {
               let root = windowScene.windows.first?.rootViewController else { return }
         var top = root
         while let next = top.presentedViewController { top = next }
-        top.present(av, animated: true)
+        top.present(activityVC, animated: true)
     }
 }
 

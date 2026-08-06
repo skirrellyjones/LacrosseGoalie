@@ -17,7 +17,7 @@ struct LiveGameView: View {
     @State var game: Game
     var onComplete: (Game) -> Void
 
-    @State private var shotLogContext: ShotLogContext? = nil
+    @State private var shotLogContext: ShotLogContext?
     @State private var showingEndGameAlert = false
     @State private var showingHalfAlert = false
 
@@ -76,7 +76,9 @@ struct LiveGameView: View {
                         HStack(spacing: 12) {
                             ShotButton(label: "Save", icon: "hand.raised.fill", color: .green) {
                                 if store.expressModeEnabled {
-                                    game.shots.append(Shot(zone: nil, outcome: .save, type: .outside, half: game.currentHalf))
+                                    game.shots.append(
+                                        Shot(zone: nil, outcome: .save, type: .outside, half: game.currentHalf)
+                                    )
                                 } else {
                                     shotLogContext = ShotLogContext(
                                         zone: nil,
@@ -88,7 +90,9 @@ struct LiveGameView: View {
                             }
                             ShotButton(label: "Goal Against", icon: "xmark.circle.fill", color: .red) {
                                 if store.expressModeEnabled {
-                                    game.shots.append(Shot(zone: nil, outcome: .goal, type: .outside, half: game.currentHalf))
+                                    game.shots.append(
+                                        Shot(zone: nil, outcome: .goal, type: .outside, half: game.currentHalf)
+                                    )
                                 } else {
                                     shotLogContext = ShotLogContext(
                                         zone: nil,
@@ -155,7 +159,8 @@ struct LiveGameView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Final: Saves \(game.totalSaves) · Goals \(game.totalGoalsAgainst) · Sv% \(String(format: "%.1f", game.savePercentage))%")
+            let savePct = String(format: "%.1f", game.savePercentage)
+            Text("Final: Saves \(game.totalSaves) · Goals \(game.totalGoalsAgainst) · Sv% \(savePct)%")
         }
     }
 }
@@ -196,11 +201,11 @@ struct LiveStatsBar: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            StatPill(label: "Saves",  value: "\(game.totalSaves)",                            color: .green)
-            StatPill(label: "Goals",  value: "\(game.totalGoalsAgainst)",                     color: .red)
-            StatPill(label: "Sv%",    value: String(format: "%.1f%%", game.savePercentage),   color: .blue)
-            StatPill(label: "Clr%",   value: String(format: "%.0f%%", game.clearPercentage),  color: .teal)
-            StatPill(label: "GBs",    value: "\(game.groundBalls)",                           color: .orange)
+            StatPill(label: "Saves", value: "\(game.totalSaves)", color: .green)
+            StatPill(label: "Goals", value: "\(game.totalGoalsAgainst)", color: .red)
+            StatPill(label: "Sv%", value: String(format: "%.1f%%", game.savePercentage), color: .blue)
+            StatPill(label: "Clr%", value: String(format: "%.0f%%", game.clearPercentage), color: .teal)
+            StatPill(label: "GBs", value: "\(game.groundBalls)", color: .orange)
         }
         .padding(10)
         .background(Color(.secondarySystemGroupedBackground))
@@ -239,7 +244,8 @@ struct ClearTrackingView: View {
                 Text("Clears")
                     .font(.headline)
                 Spacer()
-                Text("\(game.successfulClears) / \(game.clearAttempts)  (\(String(format: "%.0f%%", game.clearPercentage)))")
+                let clearPct = String(format: "%.0f%%", game.clearPercentage)
+                Text("\(game.successfulClears) / \(game.clearAttempts)  (\(clearPct))")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 Button {

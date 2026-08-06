@@ -16,7 +16,13 @@ struct ShotLogSheet: View {
     @State private var outcome: ShotOutcome
     @State private var type: ShotType = .outside
 
-    init(zone: CageZone?, showOutcomePicker: Bool, preselectedOutcome: ShotOutcome = .save, half: Int = 1, onLog: @escaping (Shot) -> Void) {
+    init(
+        zone: CageZone?,
+        showOutcomePicker: Bool,
+        preselectedOutcome: ShotOutcome = .save,
+        half: Int = 1,
+        onLog: @escaping (Shot) -> Void
+    ) {
         self.zone = zone
         self.showOutcomePicker = showOutcomePicker
         self.preselectedOutcome = preselectedOutcome
@@ -80,19 +86,19 @@ struct ShotLogSheet: View {
                         .padding(.horizontal)
 
                     VStack(spacing: 8) {
-                        ForEach(ShotType.allCases, id: \.self) { t in
+                        ForEach(ShotType.allCases, id: \.self) { shotType in
                             Button {
-                                type = t
+                                type = shotType
                             } label: {
                                 HStack {
-                                    Text(t.rawValue)
+                                    Text(shotType.rawValue)
                                         .foregroundColor(.primary)
                                     Spacer()
-                                    Image(systemName: type == t ? "checkmark.circle.fill" : "circle")
-                                        .foregroundColor(type == t ? .green : .secondary)
+                                    Image(systemName: type == shotType ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(type == shotType ? .green : .secondary)
                                 }
                                 .padding()
-                                .background(type == t
+                                .background(type == shotType
                                     ? Color.green.opacity(0.08)
                                     : Color(.secondarySystemGroupedBackground))
                                 .cornerRadius(10)

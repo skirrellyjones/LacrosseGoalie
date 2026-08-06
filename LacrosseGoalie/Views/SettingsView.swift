@@ -56,7 +56,10 @@ struct SettingsView: View {
                         Text("Danger Zone")
                     } footer: {
                         let gameCount = store.seasons.reduce(0) { $0 + $1.games.count }
-                        Text("This permanently deletes all \(store.seasons.count) season(s) and \(gameCount) game(s). Cannot be undone.")
+                        Text(
+                            "This permanently deletes all \(store.seasons.count) season(s) and " +
+                            "\(gameCount) game(s). Cannot be undone."
+                        )
                     }
                 }
 

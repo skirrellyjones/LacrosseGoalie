@@ -46,12 +46,12 @@ struct Season: Identifiable, Codable {
     var games: [Game] = []
 
     // MARK: - Aggregates
-    var totalSaves: Int           { games.reduce(0) { $0 + $1.totalSaves } }
-    var totalGoalsAgainst: Int    { games.reduce(0) { $0 + $1.totalGoalsAgainst } }
-    var totalShots: Int           { games.reduce(0) { $0 + $1.totalShots } }
-    var totalGroundBalls: Int     { games.reduce(0) { $0 + $1.groundBalls } }
-    var totalInterceptions: Int   { games.reduce(0) { $0 + $1.interceptions } }
-    var totalClearAttempts: Int   { games.reduce(0) { $0 + $1.clearAttempts } }
+    var totalSaves: Int { games.reduce(0) { $0 + $1.totalSaves } }
+    var totalGoalsAgainst: Int { games.reduce(0) { $0 + $1.totalGoalsAgainst } }
+    var totalShots: Int { games.reduce(0) { $0 + $1.totalShots } }
+    var totalGroundBalls: Int { games.reduce(0) { $0 + $1.groundBalls } }
+    var totalInterceptions: Int { games.reduce(0) { $0 + $1.interceptions } }
+    var totalClearAttempts: Int { games.reduce(0) { $0 + $1.clearAttempts } }
     var totalSuccessfulClears: Int { games.reduce(0) { $0 + $1.successfulClears } }
 
     var savePercentage: Double {
@@ -127,16 +127,16 @@ struct Game: Identifiable, Codable {
     // MARK: - Zone Stats (for heatmap)
 
     func shotCount(zone: CageZone, outcome: ShotOutcome? = nil) -> Int {
-        shots.filter { s in
-            s.zone == zone && (outcome == nil || s.outcome == outcome)
+        shots.filter { shot in
+            shot.zone == zone && (outcome == nil || shot.outcome == outcome)
         }.count
     }
 
     // MARK: - Formatting
 
     var formattedDate: String {
-        let f = DateFormatter()
-        f.dateStyle = .medium
-        return f.string(from: date)
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
     }
 }
